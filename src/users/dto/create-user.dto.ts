@@ -8,7 +8,6 @@ import {
 import { UniqueEmailValidator } from 'src/validators/unique-email.validator';
 
 export class CreateUserDto {
-  id: number;
   @IsNotEmpty()
   @IsEmail()
   @Validate(UniqueEmailValidator)

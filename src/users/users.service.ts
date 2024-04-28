@@ -9,24 +9,46 @@ export class UsersService {
     private readonly mysqlConnection: any,
   ) {}
 
-  async registerUser(userData: CreateUserDto): Promise<User[]> {
-    const { id, username, firstname, lastname, age, email, password, phone } =
-      userData;
-    console.log(userData);
-    const rows = await this.mysqlConnection.execute(
-      `INSERT INTO user (id, username, firstname, lastname, age, email, password, phone)
-      VALUES 
-          (${id}, ${username}, ${firstname}, ${lastname}, ${age}, ${email}, ${password}, ${phone});`,
-    );
-    console.log(rows);
-    return rows as User[];
+  async registerUser(userData: CreateUserDto): Promise<User> {
+    try {
+      const sql = "SELECT * FROM user WHERE username = ?;"
+      const userExists = await this.mysqlConnection.query(sql, [userData.username]) 
+      if(userExists) {
+        throw new Error('User already exists. Please Login!')
+      }
+      await this.mysqlConnection.query(
+        `INSERT INTO user (username, firstname, lastname, age, email, password, phone) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+        [...Object.values(userData)],
+      );
+
+      return userData;
+    } catch (error) {
+      throw new Error(`Error registering user: ${error}`);
+    }
+  }
+
+  async loginUser(username: string, password: string): Promise<User | string> {
+    try {
+      const query = 'SELECT * FROM user WHERE username = ? AND password = ?';
+      const [user] = await this.mysqlConnection.query(query, [
+        username,
+        password,
+      ]);
+
+      if (user.length > 0) {
+        return user[0];
+      }
+    } catch (error) {
+      console.error('Error logging in user:', error);
+      throw error;
+    }
   }
 
   async findByEmail(email: string): Promise<string> {
     const [foundEmail] = await this.mysqlConnection.execute(
       `SELECT email FROM user WHERE email = "${email}"`,
     );
-    console.log(foundEmail)
+    console.log(foundEmail);
     if (foundEmail) {
       return foundEmail;
     } else {
