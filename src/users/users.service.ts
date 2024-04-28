@@ -13,7 +13,8 @@ export class UsersService {
     try {
       const sql = "SELECT * FROM user WHERE username = ?;"
       const userExists = await this.mysqlConnection.query(sql, [userData.username]) 
-      if(userExists) {
+      console.log("User exsit: ", userExists[0])
+      if(userExists[0].length !== 0) {
         throw new Error('User already exists. Please Login!')
       }
       await this.mysqlConnection.query(
