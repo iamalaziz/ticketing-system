@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Movie } from './movie.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { catchError } from 'rxjs';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 
 @Injectable()
@@ -23,16 +22,15 @@ export class MoviesService {
     async getMovieById(id: number): Promise<Movie | string>{
         try {
             const [rows] = await this.mysqlConnection.execute(`SELECT * FROM movie WHERE id = ?`, [id]);
-            console.log('Rows:', rows); // Log the rows returned by the query
     
             if (rows.length > 0) {
-                return rows[0]; // Return the first row if it exists
+                return rows[0]; 
             } else {
-                return "No movie with such ID"; // Return a string if no rows are returned
+                return "No movie with such ID";
             }
         } catch (error) {
-            console.error('Error:', error); // Log any errors that occur during execution
-            return "Error occurred"; // Return a string if an error occurs
+            console.error('Error:', error); 
+            return "Error occurred"; 
         }
     }
 
@@ -41,7 +39,6 @@ export class MoviesService {
         try {
             const sql = "SELECT * FROM movie WHERE title = ?;"
             const movieExists = await this.mysqlConnection.query(sql, [movieData.title]);
-            console.log("Movie exists: ", movieExists[0] )
 
             if(movieExists[0].length !==0){
                 throw new Error(`This movie with the title "${movieData.title}" aready exists}"`)
@@ -81,7 +78,6 @@ export class MoviesService {
     async deleteMovie(movieId: number): Promise<Movie | string> {
         try {
             const [rows] = await this.mysqlConnection.execute(`SELECT * FROM movie WHERE id = ?`, [movieId]);
-            console.log('Rows:', rows); // Log the rows returned by the query
     
             if (rows.length > 0) {
                 await this.mysqlConnection.query(
@@ -89,13 +85,12 @@ export class MoviesService {
                     [movieId]
                 );
                 return "Movie deleted successfully"
-                // return rows[0]; // Return the first row if it exists
             } else {
-                return "No movie with such ID"; // Return a string if no rows are returned
+                return "No movie with such ID";
             }
         } catch (error) {
-            console.error('Error:', error); // Log any errors that occur during execution
-            return "Error occurred while deleting"; // Return a string if an error occurs
+            console.error('Error:', error);
+            return "Error occurred while deleting";
         }
     }
 }
