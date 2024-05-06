@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Tickets')
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
@@ -12,6 +14,8 @@ export class TicketsController {
     return this.ticketsService.create(createTicketDto);
   }
 
+  @ApiResponse({ status: 200, description: 'Successfully got all tickets ' })
+  @ApiResponse({ status: 400, description: 'Cannot get tickets' })
   @Get()
   findAll() {
     return this.ticketsService.findAll();
