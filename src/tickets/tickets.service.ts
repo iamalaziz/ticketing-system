@@ -23,8 +23,18 @@ export class TicketsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+  async findOne(id: number): Promise<Ticket | string> {
+    try {
+      const [rows] = await this.mysqlConnection.execute(`SELECT * FROM ticket WHERE id = ?`, [id]);
+
+      if(rows.length > 0) {
+        return rows[0]
+      }else{
+        return "No ticket with such ID"
+      }
+    } catch (error) { 
+      throw new Error(`Cannot find ticket with such ID=${id}`)
+    }
   }
 
   update(id: number, updateTicketDto: UpdateTicketDto) {

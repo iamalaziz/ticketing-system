@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Tickets')
 @Controller('tickets')
@@ -21,9 +21,12 @@ export class TicketsController {
     return this.ticketsService.findAll();
   }
 
+  @ApiQuery({ name: 'id', required: false, type: Number, description: 'ID of movie' })
+  @ApiResponse({ status: 200, description: 'Successful response' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.ticketsService.findOne(id);
   }
 
   @Patch(':id')
