@@ -4,14 +4,13 @@ import {
   Controller,
   Get,
   Post,
-  Query,
   Param
 } from '@nestjs/common';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller('user')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   
@@ -22,6 +21,16 @@ export class UsersController {
       return res
     } catch (error) {
       throw new BadRequestException('Failed to create user');
+    }
+  }
+
+  @Get()
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const res = await this.usersService.getAllUsers();
+      return res
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch users');
     }
   }
 

@@ -57,8 +57,8 @@ export class UsersService {
     }
   }
 
-  async getUsers(): Promise<User[]> {
-    const [rows] = await this.mysqlConnection.execute('SELECT * FROM user');
+  async getAllUsers(): Promise<User[]> {
+    const [rows] = await this.mysqlConnection.query('SELECT * FROM user');
     return rows as User[];
   }
 }
