@@ -40,7 +40,7 @@ cd cinema-ticketing-system
     ```
   - Run the Docker container: 
     ```bash
-    docker run -d -p 3000:3000 cinema-ticketing-system
+    docker run -p 3000:3000 cinema-ticketing-system
     ```
 5. Access the application:
 Open your web browser and navigate to http://localhost:3000 to access the Cinema Ticketing System.
