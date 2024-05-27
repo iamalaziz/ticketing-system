@@ -6,7 +6,6 @@ import {
   Length,
   Validate,
 } from 'class-validator';
-import { UniqueEmailValidator } from 'src/validators/unique-email.validator';
 
 export class CreateUserDto {
 
@@ -39,7 +38,6 @@ export class CreateUserDto {
   })
   @IsNotEmpty()
   @IsEmail()
-  @Validate(UniqueEmailValidator)
   email: string;
 
   @ApiProperty({

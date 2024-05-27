@@ -1,64 +1,31 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @Inject('MYSQL_CONNECTION')
-    private readonly mysqlConnection: any,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async registerUser(userData: CreateUserDto): Promise<User> {
-    try {
-      const sql = "SELECT * FROM user WHERE username = ?;"
-      const userExists = await this.mysqlConnection.query(sql, [userData.username]) 
-      console.log("User exsit: ", userExists[0])
-      if(userExists[0].length !== 0) {
-        throw new Error('User already exists. Please Login!')
-      }
-      await this.mysqlConnection.query(
-        `INSERT INTO user (username, firstname, lastname, age, email, password, phone) VALUES (?, ?, ?, ?, ?, ?, ?);`,
-        [...Object.values(userData)],
-      );
-
-      return userData;
-    } catch (error) {
-      throw new Error(`Error registering user: ${error}`);
-    }
+    const res = await this.usersRepository.registerUser(userData);
+    return res;
+  }
+  // POST auth user
+  async loginUser(userData: Partial<User>): Promise<User> {
+    const { username, password } = userData;
+    const res = await this.usersRepository.loginUser(username, password);
+    return res;
   }
 
-  async loginUser(username: string, password: string): Promise<User | string> {
-    try {
-      const query = 'SELECT * FROM user WHERE username = ? AND password = ?';
-      const [user] = await this.mysqlConnection.query(query, [
-        username,
-        password,
-      ]);
-
-      if (user.length > 0) {
-        return user[0];
-      }
-    } catch (error) {
-      console.error('Error logging in user:', error);
-      throw error;
-    }
+  // PATCH update user data
+  async updateUserData(id: number, data: User): Promise<User> {
+    const res = await this.usersRepository.updateUserData(id, data);
+    return res;
   }
 
-  async findByEmail(email: string): Promise<string> {
-    const [foundEmail] = await this.mysqlConnection.execute(
-      `SELECT email FROM user WHERE email = "${email}"`,
-    );
-    console.log(foundEmail);
-    if (foundEmail) {
-      return foundEmail;
-    } else {
-      return 'No such email';
-    }
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    const [rows] = await this.mysqlConnection.query('SELECT * FROM user');
-    return rows as User[];
+  // DELETE user profile
+  async deleteUserProfile(id: string): Promise<Boolean> {
+    return await this.usersRepository.deleteUserProfile(Number(id));
   }
 }
