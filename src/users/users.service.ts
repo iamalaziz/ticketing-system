@@ -17,6 +17,16 @@ export class UsersService {
     const res = await this.usersRepository.loginUser(username, password);
     return res;
   }
+  
+  // GET all users list
+  async getAllUsers(): Promise<User[]>{
+    return await this.usersRepository.getAllUsers()
+  }
+
+  // GET user by ID
+  async getUserById(id: number): Promise<User>{
+    return await this.usersRepository.getUserById(id)
+  }
 
   // PATCH update user data
   async updateUserData(id: number, data: User): Promise<User> {

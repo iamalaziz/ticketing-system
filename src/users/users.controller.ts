@@ -62,8 +62,26 @@ export class UsersController {
     }
   }
 
-  // PATCH update user data
+  // GET all users list
+  @Get()
+  @ApiOperation({ summary: 'Get all users list' })
+  @ApiResponse({ status: 200, description: 'Users list', type: User })
+  @ApiResponse({ status: 404, description: 'Could not fetch users list' })
+  async getAllUsers(): Promise<User[]>{
+    return await this.usersService.getAllUsers()
+  }
 
+  // GET user by ID
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
+  @ApiResponse({ status: 200, description: 'The found user', type: User })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async getUserById(@Param('id') id: number): Promise<User> {
+    return await this.usersService.getUserById(id);
+  }
+
+  // PATCH update user data
   @Patch(':id')
   async updateUserData(
     @Param('id') id: number,

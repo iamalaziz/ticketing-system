@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -38,9 +38,9 @@ export class UsersRepository {
         username,
         password,
       ]);
-      console.log(user)
+      console.log(user);
       if (user.length > 0) {
-        console.log(user[1])
+        console.log(user[1]);
         return user[1];
       }
     } catch (error) {
@@ -51,11 +51,25 @@ export class UsersRepository {
 
   async getAllUsers(): Promise<User[]> {
     const [rows] = await this.mysqlConnection.query('SELECT * FROM user');
-    return rows as User[];
+    return rows;
+  }
+
+  // GET user by id
+  async getUserById(id: number): Promise<User> {
+    try {
+      const query = `SELECT * FROM user WHERE id = ${id}`;
+      const [res] = await this.mysqlConnection.query(query);
+      if (!res[0]) {
+        throw new NotFoundException('User not Found from the database');
+      }
+      return res[0];
+    } catch (error) {
+      throw new InternalServerErrorException(`Database: Error from getUserById: ${error}`);
+    }
   }
 
   // PATCH update user data
-  async updateUserData(id:number, data: User): Promise<User> {
+  async updateUserData(id: number, data: User): Promise<User> {
     try {
       const query = `UPDATE user SET firstname = ?, lastname = ?, email = ?, password = ?, phone = ?, username = ? WHERE id = ?`;
       const values = [
@@ -65,7 +79,7 @@ export class UsersRepository {
         data.password,
         data.phone,
         data.username,
-        id
+        id,
       ];
       const res = await this.mysqlConnection.execute(query, values);
       console.log(res);
