@@ -1,84 +1,99 @@
 import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
 } from '@nestjs/common';
-import { User } from './user.entity';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { User, } from './user.entity';
+import { UsersService, } from './users.service';
+import { CreateUserDto, } from './dto/create-user.dto';
 import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiFoundResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
+	ApiBadRequestResponse,
+	ApiCreatedResponse,
+	ApiOperation,
+	ApiParam,
+	ApiResponse,
+	ApiTags,
 } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService) {}
 
   // Register User
   @Post('register')
   @ApiCreatedResponse({
-    description: 'Created user object as responce',
-    type: User,
+  	description: 'Created user object as responce',
+  	type: User,
   })
-  @ApiBadRequestResponse({
-    description: 'User cannot register. Try again',
-  })
-  async registerUser(@Body() userData: CreateUserDto): Promise<any> {
-    try {
-      const res = await this.usersService.registerUser(userData);
-      return res;
-    } catch (error) {
-      throw new BadRequestException('Failed to create user');
-    }
-  }
+  @ApiBadRequestResponse({ description: 'User cannot register. Try again', })
+	async registerUser(@Body() userData: CreateUserDto): Promise<any> {
+		try {
+			const res = await this.usersService.registerUser(userData);
+
+			return res;
+		} catch (error) {
+			throw new BadRequestException('Failed to create user');
+		}
+	}
 
   // POST Login user
   @Post('login')
   @ApiCreatedResponse({
-    description: 'User logged in',
-    type: User,
+  	description: 'User logged in',
+  	type: User,
   })
-  @ApiBadRequestResponse({
-    description: 'Login failed!',
-  })
+  @ApiBadRequestResponse({ description: 'Login failed!', })
   async loginUser(@Body() userData: any): Promise<any> {
-    try {
-      const res = await this.usersService.loginUser(userData);
-      return res;
-    } catch (error) {
-      throw new BadRequestException('Failed to login');
-    }
+  	try {
+  		const res = await this.usersService.loginUser(userData);
+
+  		return res;
+  	} catch (error) {
+  		throw new BadRequestException('Failed to login');
+  	}
   }
 
   // GET all users list
   @Get()
-  @ApiOperation({ summary: 'Get all users list' })
-  @ApiResponse({ status: 200, description: 'Users list', type: User })
-  @ApiResponse({ status: 404, description: 'Could not fetch users list' })
-  async getAllUsers(): Promise<User[]>{
-    return await this.usersService.getAllUsers()
+  @ApiOperation({ summary: 'Get all users list', })
+  @ApiResponse({
+  	status: 200,
+  	description: 'Users list',
+  	type: User, 
+  })
+  @ApiResponse({
+  	status: 404,
+  	description: 'Could not fetch users list', 
+  })
+  async getAllUsers(): Promise<User[]> {
+  	return await this.usersService.getAllUsers();
   }
 
   // GET user by ID
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiParam({ name: 'id', type: Number, description: 'User ID' })
-  @ApiResponse({ status: 200, description: 'The found user', type: User })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiOperation({ summary: 'Get user by ID', })
+  @ApiParam({
+  	name: 'id',
+  	type: Number,
+  	description: 'User ID', 
+  })
+  @ApiResponse({
+  	status: 200,
+  	description: 'The found user',
+  	type: User, 
+  })
+  @ApiResponse({
+  	status: 404,
+  	description: 'User not found', 
+  })
   async getUserById(@Param('id') id: number): Promise<User> {
-    return await this.usersService.getUserById(id);
+  	return await this.usersService.getUserById(id);
   }
 
   // PATCH update user data
@@ -87,31 +102,38 @@ export class UsersController {
     @Param('id') id: number,
     @Body() updateData: User,
   ): Promise<User> {
-    return await this.usersService.updateUserData(id, updateData);
+  	return await this.usersService.updateUserData(id, updateData);
   }
 
   // DELETE user profile
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user profile by ID' })
+  @ApiOperation({ summary: 'Delete user profile by ID', })
   @ApiParam({
-    name: 'id',
-    type: 'string',
-    description: 'The ID of the user to delete',
-    required: true,
+  	name: 'id',
+  	type: 'string',
+  	description: 'The ID of the user to delete',
+  	required: true,
   })
   @ApiResponse({
-    status: 200,
-    description: 'User profile deleted successfully',
-    type: Boolean,
+  	status: 200,
+  	description: 'User profile deleted successfully',
+  	type: Boolean,
   })
-  @ApiResponse({ status: 400, description: 'Failed to delete user data' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  async deleteUserProfile(@Param('id') id: string): Promise<Boolean> {
-    try {
-      const res = await this.usersService.deleteUserProfile(id);
-      return res;
-    } catch (error) {
-      throw new BadRequestException('Failed to delete user data');
-    }
+  @ApiResponse({
+  	status: 400,
+  	description: 'Failed to delete user data', 
+  })
+  @ApiResponse({
+  	status: 404,
+  	description: 'User not found', 
+  })
+  async deleteUserProfile(@Param('id') id: string): Promise<boolean> {
+  	try {
+  		const res = await this.usersService.deleteUserProfile(id);
+
+  		return res;
+  	} catch (error) {
+  		throw new BadRequestException('Failed to delete user data');
+  	}
   }
 }

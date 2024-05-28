@@ -1,18 +1,18 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestFactory, } from '@nestjs/core';
+import { AppModule, } from './app.module';
+import { DocumentBuilder, SwaggerModule, } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const config = new DocumentBuilder()
-    .setTitle('Ticketing Service Example')
-    .setDescription('The Ticketing Service API description')
-    .setVersion('1.0')
-    .addTag('tickets')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+	const app = await NestFactory.create(AppModule);
+	const config = new DocumentBuilder()
+		.setTitle('Ticketing Service Example')
+		.setDescription('The Ticketing Service API description')
+		.setVersion('1.0')
+		.addTag('tickets')
+		.build();
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup('api', app, document);
   
-  await app.listen(3000);
+	await app.listen(3000);
 }
 bootstrap();

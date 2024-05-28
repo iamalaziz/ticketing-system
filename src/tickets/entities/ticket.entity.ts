@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, } from '@nestjs/swagger';
 
 export class Ticket {
 
@@ -17,8 +17,8 @@ export class Ticket {
     @ApiProperty()
     fk_movie_id?: number;
 
-    constructor(id: number, fk_movie_id: number ) {
-        this.id = id;
-        this.fk_movie_id = fk_movie_id;
-      }
+    constructor(id: number, fk_movie_id: number) {
+    	this.id = id;
+    	this.fk_movie_id = fk_movie_id;
+    }
 }
