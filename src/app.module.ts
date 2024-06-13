@@ -7,12 +7,14 @@ import { ConfigModule, } from '@nestjs/config';
 import { mysqlProvider, } from './config/mysql.config';
 import { MoviesModule, } from './movies/movies.module';
 import { TicketsModule, } from './tickets/tickets.module';
+import { AuthModule, } from './auth/auth.module';
 
 @Module({
 	imports: [UsersModule,
 		ConfigModule.forRoot(),
 		MoviesModule,
-		TicketsModule,],
+		TicketsModule,
+		AuthModule,],
 	controllers: [AppController,],
 	providers: [AppService, mysqlProvider,],
 })
