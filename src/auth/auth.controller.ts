@@ -1,24 +1,34 @@
-import { Post, Body, BadRequestException, Controller } from '@nestjs/common';
+import {
+    Post,
+    Body,
+    BadRequestException,
+    Controller,
+    Req,
+    NotFoundException,
+    UnauthorizedException,
+    ConflictException,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiCreatedResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Login } from './interfaces/login.interface';
+import { AuthLoginDto } from './dto/auth.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
-  // POST Login user
-  @Post('email/login')
-  @ApiCreatedResponse({
-    description: 'User logged in',
-  })
-  @ApiBadRequestResponse({ description: 'Login failed!' })
-  async login(@Body() userData: Login): Promise<any> {
-    try {
-      const res = await this.authService.validateLogin(userData);
+    constructor(private readonly authService: AuthService) {}
 
-      return res;
-    } catch (error) {
-      throw new BadRequestException('Failed to login');
+    // POST Login user
+    @UseGuards(AuthGuard('local'))
+    @Post('login')
+    async login(@Body() loginData: AuthLoginDto): Promise<any> {
+        return await this.authService.validateLogin(loginData);
     }
-  }
+
+    // Register User
+    @Post('register')
+    async registerUser(@Body() userData: CreateUserDto): Promise<any> {
+        return await this.authService.registerUser(userData);
+    }
 }

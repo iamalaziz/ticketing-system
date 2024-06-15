@@ -9,5 +9,6 @@ import { UsersRepository, } from './users.repository';
 		mysqlProvider,
 		UsersRepository,],
 	controllers: [UsersController,],
+	exports: [UsersService]
 })
 export class UsersModule {}

@@ -1,44 +1,40 @@
-import { Injectable, } from '@nestjs/common';
-import { User, } from './user.entity';
-import { CreateUserDto, } from './dto/create-user.dto';
-import { UsersRepository, } from './users.repository';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UsersRepository } from './users.repository';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly usersRepository: UsersRepository) {}
+    constructor(private readonly usersRepository: UsersRepository) {}
 
-	async registerUser(userData: CreateUserDto): Promise<User> {
-		const res = await this.usersRepository.registerUser(userData);
+    async createUser(userData: CreateUserDto): Promise<User> {
+        return await this.usersRepository.createUser(userData);
+    }
 
-		return res;
-	}
-	// POST auth user
-	async loginUser(userData: Partial<User>): Promise<User> {
-		const { username, password, } = userData;
-		const res = await this.usersRepository.loginUser(username, password);
+    // GET all users list
+    async getAllUsers(): Promise<User[]> {
+        return await this.usersRepository.getAllUsers();
+    }
 
-		return res;
-	}
+    // GET user by ID, email
+    async getUserBy(email: string): Promise<User> {
+        return await this.usersRepository.getUserBy(email);
+    }
 
-	// GET all users list
-	async getAllUsers(): Promise<User[]> {
-		return await this.usersRepository.getAllUsers();
-	}
+    async existsEmail(email: string): Promise<Boolean> {
+        return this.usersRepository.existsEmail(email);
+    }
 
-	// GET user by ID
-	async getUserById(id: number): Promise<User> {
-		return await this.usersRepository.getUserById(id);
-	}
+    // PATCH update user data
+    async updateUserData(id: number, data: User): Promise<User> {
+        const res = await this.usersRepository.updateUserData(id, data);
 
-	// PATCH update user data
-	async updateUserData(id: number, data: User): Promise<User> {
-		const res = await this.usersRepository.updateUserData(id, data);
+        return res;
+    }
 
-		return res;
-	}
-
-	// DELETE user profile
-	async deleteUserProfile(id: string): Promise<boolean> {
-		return await this.usersRepository.deleteUserProfile(Number(id));
-	}
+    // DELETE user profile
+    async deleteUserProfile(id: string): Promise<boolean> {
+        return await this.usersRepository.deleteUserProfile(Number(id));
+    }
 }
