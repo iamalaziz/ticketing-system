@@ -1,12 +1,10 @@
-import { Injectable, Inject, HttpException } from '@nestjs/common';
-import { User } from '../users/user.entity';
-import { AuthLoginDto } from './dto/auth.dto';
+import { Injectable, Inject, } from '@nestjs/common';
 
 @Injectable()
 export class AuthRepository {
-    constructor(
+	constructor(
         @Inject('MYSQL_CONNECTION')
         private readonly mysqlConnection: any
-    ) {}
+	) {}
 
 }
