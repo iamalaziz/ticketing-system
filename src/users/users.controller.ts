@@ -46,7 +46,29 @@ export class UsersController {
     	}
     }
 
-    // GET user by ID
+	// GET user by email
+    @Get(':id')
+    @ApiOperation({ summary: 'Get user by id', })
+    @ApiParam({
+    	name: 'id',
+    	type: Number,
+    	description: 'User data',
+    })
+    @ApiResponse({
+    	status: 200,
+    	description: 'The found user',
+    	type: User,
+    })
+    @ApiResponse({
+    	status: 404,
+    	description: 'User not found',
+    })
+    async getUserById(@Param('id') id: number): Promise<User> {
+    	return await this.usersService.getUserById(id);
+    }
+
+
+    // GET user by email
     @Get(':email')
     @ApiOperation({ summary: 'Get user by email', })
     @ApiParam({
