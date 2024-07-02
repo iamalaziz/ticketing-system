@@ -6,6 +6,7 @@ import {
 	Get,
 	HttpException,
 	HttpStatus,
+	NotFoundException,
 	Param,
 	Patch,
 } from '@nestjs/common';
@@ -22,6 +23,10 @@ import {
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
+
+	private isValidId(id: string): boolean {
+        return !isNaN(Number(id)) && Number(id) > 0;
+    }
     // GET all users list
     @Get()
     @ApiOperation({ summary: 'Get all users list', })
@@ -72,8 +77,23 @@ export class UsersController {
     	status: 404,
     	description: 'User not found',
     })
-    async getUserById(@Param('id') id: number): Promise<User> {
-    	return await this.usersService.getUserById(id);
+    async getUserById(@Param('id') id: string): Promise<User> {
+		// Validate the ID format (assuming it should be a number)
+        if (!this.isValidId(id)) {
+            throw new BadRequestException('Invalid ID format');
+        }
+    	try {
+            const user = await this.usersService.getUserById(Number(id));
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
+            return user;
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

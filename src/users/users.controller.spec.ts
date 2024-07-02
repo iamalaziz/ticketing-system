@@ -5,7 +5,7 @@ import { ConfigService, } from '@nestjs/config';
 import { User, } from './user.entity';
 import { UsersRepository, } from './users.repository';
 import { JwtService, } from '@nestjs/jwt';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 
 describe('UsersController', () => {
 	let usersController: UsersController;
@@ -120,11 +120,42 @@ describe('UsersController', () => {
 	
 
 	describe('getUserById', () => {
-		it('should return a user by ID', async () => {
-			jest.spyOn(usersService, 'getUserById').mockResolvedValue(mockUser);
+		it('should throw a BadRequestException for an invalid ID format', async () => {
+            const invalidId = 'invalid-id';
+            try {
+                await usersController.getUserById(invalidId);
+            } catch (error) {
+                expect(error).toBeInstanceOf(BadRequestException);
+                expect(error.message).toBe('Invalid ID format');
+            }
+        });
 
-			const result = await usersController.getUserById(mockUser.id);
-			expect(result).toEqual(mockUser);
-		});
+        it('should return a user if found', async () => {
+            jest.spyOn(usersService, 'getUserById').mockResolvedValue(mockUser);
+            const result = await usersController.getUserById('1');
+            expect(result).toEqual(mockUser);
+        });
+
+		it('should throw a NotFoundException if user not found', async () => {
+            jest.spyOn(usersService, 'getUserById').mockResolvedValue(null);
+            try {
+                await usersController.getUserById('1');
+            } catch (error) {
+                expect(error).toBeInstanceOf(NotFoundException);
+                expect(error.message).toBe('User not found');
+            }
+        });
+
+        it('should throw an HttpException for service errors', async () => {
+            const errorMessage = 'Failed to get user';
+            jest.spyOn(usersService, 'getUserById').mockRejectedValue(new Error(errorMessage));
+            try {
+                await usersController.getUserById('1');
+            } catch (error) {
+                expect(error).toBeInstanceOf(HttpException);
+                expect(error.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+                expect(error.message).toBe(errorMessage);
+            }
+        });
 	});
 });
