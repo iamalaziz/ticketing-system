@@ -4,6 +4,8 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpException,
+	HttpStatus,
 	Param,
 	Patch,
 } from '@nestjs/common';
@@ -33,7 +35,14 @@ export class UsersController {
     	description: 'Could not fetch users list',
     })
 	async getAllUsers(): Promise<User[]> {
-		return await this.usersService.getAllUsers();
+		try {
+            // return await this.usersService.getAllUsers();
+
+			const users = await this.usersService.getAllUsers();
+            return users || [];
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 	}
 
     // does email exists
