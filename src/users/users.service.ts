@@ -1,7 +1,7 @@
-import { Injectable, } from '@nestjs/common';
-import { User, } from './user.entity';
-import { CreateUserDto, } from './dto/create-user.dto';
-import { UsersRepository, } from './users.repository';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { User } from "./user.entity";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UsersRepository } from "./users.repository";
 
 @Injectable()
 export class UsersService {
@@ -20,10 +20,14 @@ export class UsersService {
 	async getUserBy(email: string): Promise<User> {
 		return await this.usersRepository.getUserBy(email);
 	}
-    
-	// GET user by ID, email
+
+	// GET user by ID
 	async getUserById(id: number): Promise<User> {
-		return await this.usersRepository.getUserById(id);
+		const user = await this.usersRepository.getUserById(id);
+		if (!user) {
+			throw new NotFoundException(`User with ID ${id} not found`);
+		}
+		return user;
 	}
 
 	async existsEmail(email: string): Promise<boolean> {

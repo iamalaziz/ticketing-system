@@ -117,8 +117,6 @@ describe('UsersController', () => {
         });
 	});
 
-	
-
 	describe('getUserById', () => {
 		it('should throw a BadRequestException for an invalid ID format', async () => {
             const invalidId = 'invalid-id';
