@@ -3,7 +3,6 @@ dist
 Dockerfile*
 .vscode
 .git*
-
 .eslintrc.js
 .aws
 *.yml
