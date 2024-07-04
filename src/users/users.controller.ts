@@ -114,8 +114,8 @@ export class UsersController {
     	status: 404,
     	description: 'User not found',
     })
-    async getUserBy(@Param('email') email: string): Promise<User> {
-    	return await this.usersService.getUserBy(email);
+    async getUserByEmail(@Param('email') email: string): Promise<User> {
+    	return await this.usersService.getUserByEmail(email);
     }
 
     // PATCH update user data
