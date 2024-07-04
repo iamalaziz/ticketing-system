@@ -34,7 +34,7 @@ export class UsersRepository {
 	}
 
 	// GET user by id
-	async getUserBy(email: string): Promise<User> {
+	async getUserByEmail(email: string): Promise<User> {
 		try {
 			const query = 'SELECT * FROM user WHERE email = ?';
 			const [res,] = await this.mysqlConnection.query(query, [email,]);
