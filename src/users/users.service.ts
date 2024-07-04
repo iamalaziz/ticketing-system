@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { User } from "./user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersRepository } from "./users.repository";
@@ -7,13 +7,25 @@ import { UsersRepository } from "./users.repository";
 export class UsersService {
 	constructor(private readonly usersRepository: UsersRepository) {}
 
+
 	async createUser(userData: CreateUserDto): Promise<boolean> {
-		return await this.usersRepository.createUser(userData);
+		try {
+			return await this.usersRepository.createUser(userData);
+			
+		} catch (error) {
+			console.error('Error creating user:', error.message);
+            throw new InternalServerErrorException('Failed to create user');
+		}
 	}
 
 	// GET all users list
 	async getAllUsers(): Promise<User[]> {
-		return await this.usersRepository.getAllUsers();
+		try {
+			return await this.usersRepository.getAllUsers();
+		} catch (error) {
+			console.error('Error fetching all users:', error.message);
+			throw new InternalServerErrorException('Failed to fetch users');
+		}
 	}
 
 	// GET user by ID, email
