@@ -20,7 +20,6 @@ import { SecurityConfig } from "src/common/config/config.interface";
 					configService.get<SecurityConfig>(
 						"security",
 					);
-				console.log(securityConfig);
 
 				return {
 					secret: configService.get<string>(
@@ -35,11 +34,6 @@ import { SecurityConfig } from "src/common/config/config.interface";
 		}),
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		mysqlProvider,
-		AuthRepository,
-		LocalStrategy,
-	],
+	providers: [AuthService, mysqlProvider, AuthRepository, LocalStrategy],
 })
 export class AuthModule {}

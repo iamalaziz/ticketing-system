@@ -4,10 +4,8 @@ import {
 	Controller,
 	Delete,
 	Get,
-	HttpException,
-	HttpStatus,
 	Param,
-	Patch,
+	Put,
 } from "@nestjs/common";
 import { User } from "./user.entity";
 import { UsersService } from "./users.service";
@@ -34,22 +32,11 @@ export class UsersController {
 		description: "Could not fetch users list",
 	})
 	async getAllUsers(): Promise<User[]> {
-		try {
-			// return await this.usersService.getAllUsers();
-
-			const users = await this.usersService.getAllUsers();
-
-			return users || [];
-		} catch (error) {
-			throw new HttpException(
-				error.message,
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
-		}
+		return await this.usersService.getAllUsers();
 	}
 
 	// does email exist
-	@Get("email/:email")
+	@Get("email-exists/:email")
 	async existsEmail(@Param("email") email: string): Promise<boolean> {
 		try {
 			return await this.usersService.existsEmail(email);
@@ -85,11 +72,11 @@ export class UsersController {
 	}
 
 	// GET user by email
-	@Get(":email")
+	@Get("email/:email")
 	@ApiOperation({ summary: "Get user by email" })
 	@ApiParam({
 		name: "email",
-		type: Number,
+		type: String,
 		description: "User data",
 	})
 	@ApiResponse({
@@ -105,8 +92,9 @@ export class UsersController {
 		return await this.usersService.getUserByEmail(email);
 	}
 
-	// PATCH update user data
-	@Patch(":id")
+	// PUT update user data
+	@Put(":id")
+	@ApiOperation({ summary: "Update user data" })
 	async updateUserData(
 		@Param("id") id: number,
 		@Body() updateData: User,
@@ -137,12 +125,6 @@ export class UsersController {
 		description: "User not found",
 	})
 	async deleteUserProfile(@Param("id") id: string): Promise<boolean> {
-		try {
-			return await this.usersService.deleteUserProfile(id);
-		} catch (error) {
-			throw new BadRequestException(
-				"Failed to delete user data",
-			);
-		}
+		return await this.usersService.deleteUserProfile(id);
 	}
 }

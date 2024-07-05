@@ -15,7 +15,6 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
 	canActivate(
 		context: ExecutionContext,
 	): boolean | Promise<boolean> | Observable<boolean> {
-		console.log("jwt guard");
 		const request = context.switchToHttp().getRequest();
 		const token = request.headers?.authorization?.split(" ")[1];
 		if (!token) {

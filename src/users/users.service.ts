@@ -9,44 +9,23 @@ export class UsersService {
 	constructor(private readonly usersRepository: UsersRepository) {}
 
 	async createUser(userData: CreateUserDto): Promise<boolean> {
-		try {
-			return await this.usersRepository.createUser(userData);
-		} catch (error) {
-			console.error("Error creating user:", error.message);
-			throw new InternalServerErrorException(
-				"Failed to create user",
-			);
-		}
+		return await this.usersRepository.createUser(userData);
 	}
 
 	// GET all users list
 	async getAllUsers(): Promise<User[]> {
-		try {
-			return await this.usersRepository.getAllUsers();
-		} catch (error) {
-			console.error(
-				"Error fetching all users:",
-				error.message,
-			);
-			throw new InternalServerErrorException(
-				"Failed to fetch users",
-			);
-		}
+		return await this.usersRepository.getAllUsers();
 	}
 
-	// GET user by ID, email
+	// GET user email
 	async getUserByEmail(email: string): Promise<User> {
-		try {
-			return await this.usersRepository.getUserByEmail(email);
-		} catch (error) {
-			console.error(
-				"Error fetching user by email:",
-				error.message,
-			);
-			throw new InternalServerErrorException(
-				"Failed to fetch user by email",
+		let user = await this.usersRepository.getUserByEmail(email);
+		if (!user) {
+			throw NotFoundDataException(
+				`User with ${email} not found`,
 			);
 		}
+		return user;
 	}
 
 	// GET user by ID
@@ -77,36 +56,20 @@ export class UsersService {
 
 	// PATCH update user data
 	async updateUserData(id: number, data: User): Promise<User> {
-		try {
-			return await this.usersRepository.updateUserData(
-				id,
-				data,
-			);
-		} catch (error) {
-			console.error(
-				"Error while updating user data:",
-				+error.message,
-			);
-			throw new InternalServerErrorException(
-				"Failed to update user data",
-			);
-		}
+		await this.usersRepository.updateUserData(id, data);
+		return this.getUserById(id);
 	}
 
 	// DELETE user profile
 	async deleteUserProfile(id: string): Promise<boolean> {
-		try {
-			return await this.usersRepository.deleteUserProfile(
-				Number(id),
+		let res = await this.usersRepository.deleteUserProfile(
+			Number(id),
+		);
+		if (!res)
+			throw NotFoundDataException(
+				`User with id ${id} Not Found`,
 			);
-		} catch (error) {
-			console.error(
-				"Error while deleting user profile:",
-				+error.message,
-			);
-			throw new InternalServerErrorException(
-				"Failed to delete user profile",
-			);
-		}
+
+		return res;
 	}
 }

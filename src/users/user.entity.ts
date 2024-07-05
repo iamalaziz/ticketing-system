@@ -14,7 +14,7 @@ export class User {
 	lastname: string;
 
 	@ApiProperty()
-	age: number;
+	date_of_birth: number;
 
 	@ApiProperty()
 	email: string;
