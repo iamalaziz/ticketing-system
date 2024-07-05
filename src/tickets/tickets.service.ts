@@ -1,24 +1,26 @@
-import { Inject, Injectable, } from '@nestjs/common';
-import { CreateTicketDto, } from './dto/create-ticket.dto';
-import { UpdateTicketDto, } from './dto/update-ticket.dto';
-import { Ticket, } from './entities/ticket.entity';
+import { Inject, Injectable } from "@nestjs/common";
+import { CreateTicketDto } from "./dto/create-ticket.dto";
+import { UpdateTicketDto } from "./dto/update-ticket.dto";
+import { Ticket } from "./entities/ticket.entity";
 
 @Injectable()
 export class TicketsService {
 	constructor(
-    @Inject('MYSQL_CONNECTION')
-    private readonly mysqlConnection: any,
+		@Inject("MYSQL_CONNECTION")
+		private readonly mysqlConnection: any,
 	) {}
 
 	create(createTicketDto: CreateTicketDto) {
-		return 'This action adds a new ticket';
+		return "This action adds a new ticket";
 	}
 
 	async findAll(): Promise<Ticket[]> {
 		try {
-			const [rows,] = await this.mysqlConnection.execute('SELECT *FROM ticket');
+			const [rows] = await this.mysqlConnection.execute(
+				"SELECT *FROM ticket",
+			);
 
-			return rows; 
+			return rows;
 		} catch (error) {
 			throw new Error(`Cannot find any tickets ${error}`);
 		}
@@ -26,15 +28,20 @@ export class TicketsService {
 
 	async findOne(id: number): Promise<Ticket | string> {
 		try {
-			const [rows,] = await this.mysqlConnection.execute('SELECT * FROM ticket WHERE id = ?', [id,]);
+			const [rows] = await this.mysqlConnection.execute(
+				"SELECT * FROM ticket WHERE id = ?",
+				[id],
+			);
 
-			if(rows.length > 0) {
+			if (rows.length > 0) {
 				return rows[0];
-			}else{
-				return 'No ticket with such ID';
+			} else {
+				return "No ticket with such ID";
 			}
-		} catch (error) { 
-			throw new Error(`Cannot find ticket with such ID=${id}`);
+		} catch (error) {
+			throw new Error(
+				`Cannot find ticket with such ID=${id}`,
+			);
 		}
 	}
 

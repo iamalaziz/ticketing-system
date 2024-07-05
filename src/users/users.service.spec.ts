@@ -55,7 +55,10 @@ describe("UsersService", () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				UsersService,
-				{ provide: UsersRepository, useValue: mockUserRepository },
+				{
+					provide: UsersRepository,
+					useValue: mockUserRepository,
+				},
 			],
 		}).compile();
 
@@ -74,27 +77,35 @@ describe("UsersService", () => {
 
 			const result = await service.createUser(mockUser);
 			expect(result).toBe(true);
-			expect(mockUserRepository.createUser).toHaveBeenCalledWith(mockUser);
+			expect(
+				mockUserRepository.createUser,
+			).toHaveBeenCalledWith(mockUser);
 		});
 
 		it("should throw an InternalServerErrorException if user creation fails", async () => {
 			const errorMessage = "Database error";
-			mockUserRepository.createUser.mockRejectedValue(new Error(errorMessage));
-
-			await expect(service.createUser(mockUser)).rejects.toThrow(
-				InternalServerErrorException
+			mockUserRepository.createUser.mockRejectedValue(
+				new Error(errorMessage),
 			);
+
+			await expect(
+				service.createUser(mockUser),
+			).rejects.toThrow(InternalServerErrorException);
 		});
 	});
 
 	//Get All Users
 	describe("getAllUsers", () => {
 		it("should return an array of users if successful", async () => {
-			mockUserRepository.getAllUsers.mockResolvedValue(mockUsers);
+			mockUserRepository.getAllUsers.mockResolvedValue(
+				mockUsers,
+			);
 
 			const result = await service.getAllUsers();
 			expect(result).toEqual(mockUsers);
-			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
+			expect(
+				mockUserRepository.getAllUsers,
+			).toHaveBeenCalled();
 		});
 
 		it("should return an empty array if no users are found", async () => {
@@ -102,15 +113,19 @@ describe("UsersService", () => {
 
 			const result = await service.getAllUsers();
 			expect(result).toEqual([]);
-			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
+			expect(
+				mockUserRepository.getAllUsers,
+			).toHaveBeenCalled();
 		});
 
 		it("should throw an InternalServerErrorException if fetching users fails", async () => {
 			const errorMessage = "Database error";
-			mockUserRepository.getAllUsers.mockRejectedValue(new Error(errorMessage));
+			mockUserRepository.getAllUsers.mockRejectedValue(
+				new Error(errorMessage),
+			);
 
 			await expect(service.getAllUsers()).rejects.toThrow(
-				InternalServerErrorException
+				InternalServerErrorException,
 			);
 		});
 
@@ -131,7 +146,9 @@ describe("UsersService", () => {
 					age: "twenty-five",
 				},
 			]);
-			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
+			expect(
+				mockUserRepository.getAllUsers,
+			).toHaveBeenCalled();
 		});
 
 		it("should handle null response from repository gracefully", async () => {
@@ -139,17 +156,19 @@ describe("UsersService", () => {
 
 			const result = await service.getAllUsers();
 			expect(result).toBeNull();
-			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
+			expect(
+				mockUserRepository.getAllUsers,
+			).toHaveBeenCalled();
 		});
 
 		it("should handle repository throwing a custom error", async () => {
 			class CustomError extends Error {}
 			mockUserRepository.getAllUsers.mockRejectedValue(
-				new CustomError("Custom error")
+				new CustomError("Custom error"),
 			);
 
 			await expect(service.getAllUsers()).rejects.toThrow(
-				InternalServerErrorException
+				InternalServerErrorException,
 			);
 		});
 	});
@@ -157,7 +176,9 @@ describe("UsersService", () => {
 	// Get User By ID
 	describe("getUserById", () => {
 		it("should return a user if found", async () => {
-			mockUserRepository.getUserById.mockResolvedValue(mockUser);
+			mockUserRepository.getUserById.mockResolvedValue(
+				mockUser,
+			);
 
 			const result = await service.getUserById(32);
 			expect(result).toEqual(mockUser);
@@ -170,13 +191,17 @@ describe("UsersService", () => {
 				await service.getUserById(32);
 			} catch (error) {
 				expect(error).toBeInstanceOf(NotFoundException);
-				expect(error.message).toBe("User with ID 32 not found");
+				expect(error.message).toBe(
+					"User with ID 32 not found",
+				);
 			}
 		});
 
 		it("should propagate repository errors", async () => {
 			const errorMessage = "Database error";
-			mockUserRepository.getUserById.mockRejectedValue(new Error(errorMessage));
+			mockUserRepository.getUserById.mockRejectedValue(
+				new Error(errorMessage),
+			);
 
 			try {
 				await service.getUserById(32);
