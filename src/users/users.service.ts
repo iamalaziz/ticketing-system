@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { User } from "./user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersRepository } from "./users.repository";
-import { NotFoundDataException } from "src/common/exceptions";
+import { NotFoundDataException } from "../common/exceptions";
 
 @Injectable()
 export class UsersService {

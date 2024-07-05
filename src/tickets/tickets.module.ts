@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TicketsService } from "./tickets.service";
 import { TicketsController } from "./tickets.controller";
-import { mysqlProvider } from "src/common/database/mysql.config";
+import { mysqlProvider } from "../common/database/mysql.config";
 
 @Module({
 	controllers: [TicketsController],

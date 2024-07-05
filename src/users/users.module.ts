@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UsersController } from "./users.controller";
-import { mysqlProvider } from "src/common/database/mysql.config";
+import { mysqlProvider } from "../common/database/mysql.config";
 import { UsersRepository } from "./users.repository";
 
 @Module({
