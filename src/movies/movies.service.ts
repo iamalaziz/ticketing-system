@@ -12,9 +12,7 @@ export class MoviesService {
 
 	async getMovies(): Promise<Movie[]> {
 		try {
-			const [rows] = await this.mysqlConnection.execute(
-				"SELECT * FROM movie ",
-			);
+			const [rows] = await this.mysqlConnection.execute("SELECT * FROM movie ");
 
 			return rows;
 		} catch (error) {
@@ -24,10 +22,7 @@ export class MoviesService {
 
 	async getMovieById(id: number): Promise<Movie | string> {
 		try {
-			const [rows] = await this.mysqlConnection.execute(
-				"SELECT * FROM movie WHERE id = ?",
-				[id],
-			);
+			const [rows] = await this.mysqlConnection.execute("SELECT * FROM movie WHERE id = ?", [id]);
 
 			if (rows.length > 0) {
 				return rows[0];
@@ -42,15 +37,10 @@ export class MoviesService {
 	async createMovie(movieData: CreateMovieDto): Promise<Movie> {
 		try {
 			const sql = "SELECT * FROM movie WHERE title = ?;";
-			const movieExists = await this.mysqlConnection.query(
-				sql,
-				[movieData.title],
-			);
+			const movieExists = await this.mysqlConnection.query(sql, [movieData.title]);
 
 			if (movieExists[0].length !== 0) {
-				throw new Error(
-					`This movie with the title "${movieData.title}" aready exists}"`,
-				);
+				throw new Error(`This movie with the title "${movieData.title}" aready exists}"`);
 			}
 			await this.mysqlConnection.query(
 				"INSERT INTO movie (title, genre, language, duration) VALUES (?, ?, ?, ?);",
@@ -63,20 +53,12 @@ export class MoviesService {
 		}
 	}
 
-	async updateMovie(
-		movieId: number,
-		movieData: UpdateMovieDto,
-	): Promise<Movie> {
+	async updateMovie(movieId: number, movieData: UpdateMovieDto): Promise<Movie> {
 		try {
 			const sql = "SELECT * FROM movie WHERE id = ?;";
-			const movieExists = await this.mysqlConnection.query(
-				sql,
-				[movieId],
-			);
+			const movieExists = await this.mysqlConnection.query(sql, [movieId]);
 			if (movieExists[0] === 0) {
-				throw new Error(
-					"There is no movie with id " + movieId,
-				);
+				throw new Error("There is no movie with id " + movieId);
 			}
 
 			await this.mysqlConnection.query(
@@ -92,16 +74,12 @@ export class MoviesService {
 
 	async deleteMovie(movieId: number): Promise<Movie | string> {
 		try {
-			const [rows] = await this.mysqlConnection.execute(
-				"SELECT * FROM movie WHERE id = ?",
-				[movieId],
-			);
+			const [rows] = await this.mysqlConnection.execute("SELECT * FROM movie WHERE id = ?", [
+				movieId,
+			]);
 
 			if (rows.length > 0) {
-				await this.mysqlConnection.query(
-					"DELETE FROM movie WHERE id = ?;",
-					[movieId],
-				);
+				await this.mysqlConnection.query("DELETE FROM movie WHERE id = ?;", [movieId]);
 
 				return "Movie deleted successfully";
 			} else {

@@ -5,12 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { User } from "./user.entity";
 import { UsersRepository } from "./users.repository";
 import { JwtService } from "@nestjs/jwt";
-import {
-	BadRequestException,
-	HttpException,
-	HttpStatus,
-	NotFoundException,
-} from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, NotFoundException } from "@nestjs/common";
 
 describe("UsersController", () => {
 	let usersController: UsersController;
@@ -61,9 +56,7 @@ describe("UsersController", () => {
 				{
 					provide: "MYSQL_CONNECTION",
 					useValue: {
-						query: jest
-							.fn()
-							.mockResolvedValue([]),
+						query: jest.fn().mockResolvedValue([]),
 					},
 				},
 			],
@@ -79,47 +72,32 @@ describe("UsersController", () => {
 
 	describe("getAllUsers", () => {
 		it("should return an array of users", async () => {
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockResolvedValue(mockUsers);
+			jest.spyOn(usersService, "getAllUsers").mockResolvedValue(mockUsers);
 			const result = await usersController.getAllUsers();
 			expect(result).toEqual(mockUsers);
 		});
 
 		it("should return an empty array when no users found", async () => {
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockResolvedValue([]);
+			jest.spyOn(usersService, "getAllUsers").mockResolvedValue([]);
 			const result = await usersController.getAllUsers();
 			expect(result).toEqual([]);
 		});
 
 		it("should handle null response from service", async () => {
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockResolvedValue(null);
+			jest.spyOn(usersService, "getAllUsers").mockResolvedValue(null);
 			const result = await usersController.getAllUsers();
 			expect(result).toEqual([]);
 		});
 
 		it("should handle undefined response from service", async () => {
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockResolvedValue(undefined);
+			jest.spyOn(usersService, "getAllUsers").mockResolvedValue(undefined);
 			const result = await usersController.getAllUsers();
 			expect(result).toEqual([]);
 		});
 
 		it("should handle errors", async () => {
 			const errorMessage = "Failed to get users";
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockRejectedValue(new Error(errorMessage));
+			jest.spyOn(usersService, "getAllUsers").mockRejectedValue(new Error(errorMessage));
 			try {
 				await usersController.getAllUsers();
 			} catch (error) {
@@ -129,17 +107,12 @@ describe("UsersController", () => {
 
 		it("should throw an HttpException for service errors", async () => {
 			const errorMessage = "Failed to get users";
-			jest.spyOn(
-				usersService,
-				"getAllUsers",
-			).mockRejectedValue(new Error(errorMessage));
+			jest.spyOn(usersService, "getAllUsers").mockRejectedValue(new Error(errorMessage));
 			try {
 				await usersController.getAllUsers();
 			} catch (error) {
 				expect(error).toBeInstanceOf(HttpException);
-				expect(error.getStatus()).toBe(
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				);
+				expect(error.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
 				expect(error.message).toBe(errorMessage);
 			}
 		});
@@ -151,27 +124,19 @@ describe("UsersController", () => {
 			try {
 				await usersController.getUserById(invalidId);
 			} catch (error) {
-				expect(error).toBeInstanceOf(
-					BadRequestException,
-				);
+				expect(error).toBeInstanceOf(BadRequestException);
 				expect(error.message).toBe("Invalid ID format");
 			}
 		});
 
 		it("should return a user if found", async () => {
-			jest.spyOn(
-				usersService,
-				"getUserById",
-			).mockResolvedValue(mockUser);
+			jest.spyOn(usersService, "getUserById").mockResolvedValue(mockUser);
 			const result = await usersController.getUserById("1");
 			expect(result).toEqual(mockUser);
 		});
 
 		it("should throw a NotFoundException if user not found", async () => {
-			jest.spyOn(
-				usersService,
-				"getUserById",
-			).mockResolvedValue(null);
+			jest.spyOn(usersService, "getUserById").mockResolvedValue(null);
 			try {
 				await usersController.getUserById("1");
 			} catch (error) {
@@ -182,17 +147,12 @@ describe("UsersController", () => {
 
 		it("should throw an HttpException for service errors", async () => {
 			const errorMessage = "Failed to get user";
-			jest.spyOn(
-				usersService,
-				"getUserById",
-			).mockRejectedValue(new Error(errorMessage));
+			jest.spyOn(usersService, "getUserById").mockRejectedValue(new Error(errorMessage));
 			try {
 				await usersController.getUserById("1");
 			} catch (error) {
 				expect(error).toBeInstanceOf(HttpException);
-				expect(error.getStatus()).toBe(
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				);
+				expect(error.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
 				expect(error.message).toBe(errorMessage);
 			}
 		});

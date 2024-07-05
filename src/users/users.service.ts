@@ -19,11 +19,9 @@ export class UsersService {
 
 	// GET user email
 	async getUserByEmail(email: string): Promise<User> {
-		let user = await this.usersRepository.getUserByEmail(email);
+		const user = await this.usersRepository.getUserByEmail(email);
 		if (!user) {
-			throw NotFoundDataException(
-				`User with ${email} not found`,
-			);
+			throw NotFoundDataException(`User with ${email} not found`);
 		}
 		return user;
 	}
@@ -32,9 +30,7 @@ export class UsersService {
 	async getUserById(id: number): Promise<User> {
 		const user = await this.usersRepository.getUserById(id);
 		if (!user) {
-			throw NotFoundDataException(
-				`User with ID ${id} not found`,
-			);
+			throw NotFoundDataException(`User with ID ${id} not found`);
 		}
 
 		return user;
@@ -44,13 +40,8 @@ export class UsersService {
 		try {
 			return await this.usersRepository.existsEmail(email);
 		} catch (error) {
-			console.error(
-				"Error checking if email exists:",
-				error.message,
-			);
-			throw new InternalServerErrorException(
-				"Failed to check if email exists",
-			);
+			console.error("Error checking if email exists:", error.message);
+			throw new InternalServerErrorException("Failed to check if email exists");
 		}
 	}
 
@@ -62,13 +53,8 @@ export class UsersService {
 
 	// DELETE user profile
 	async deleteUserProfile(id: string): Promise<boolean> {
-		let res = await this.usersRepository.deleteUserProfile(
-			Number(id),
-		);
-		if (!res)
-			throw NotFoundDataException(
-				`User with id ${id} Not Found`,
-			);
+		const res = await this.usersRepository.deleteUserProfile(Number(id));
+		if (!res) throw NotFoundDataException(`User with id ${id} Not Found`);
 
 		return res;
 	}

@@ -1,12 +1,4 @@
-import {
-	BadRequestException,
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Put,
-} from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
 import { User } from "./user.entity";
 import { UsersService } from "./users.service";
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -95,10 +87,7 @@ export class UsersController {
 	// PUT update user data
 	@Put(":id")
 	@ApiOperation({ summary: "Update user data" })
-	async updateUserData(
-		@Param("id") id: number,
-		@Body() updateData: User,
-	): Promise<User> {
+	async updateUserData(@Param("id") id: number, @Body() updateData: User): Promise<User> {
 		return await this.usersService.updateUserData(id, updateData);
 	}
 

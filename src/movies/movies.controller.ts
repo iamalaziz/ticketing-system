@@ -1,13 +1,4 @@
-import {
-	BadRequestException,
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Patch,
-	Post,
-} from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { MoviesService } from "./movies.service";
 import { Movie } from "./movie.entity";
 import { CreateMovieDto } from "./dto/create-movie.dto";
@@ -70,14 +61,11 @@ export class MoviesController {
 	@Post("create")
 	async createMovie(@Body() movieData: CreateMovieDto): Promise<any> {
 		try {
-			const res =
-				await this.movieService.createMovie(movieData);
+			const res = await this.movieService.createMovie(movieData);
 
 			return res;
 		} catch (error) {
-			throw new BadRequestException(
-				`Failed to create movie: ${error}`,
-			);
+			throw new BadRequestException(`Failed to create movie: ${error}`);
 		}
 	}
 
@@ -94,21 +82,13 @@ export class MoviesController {
 		description: "Failed to update movie",
 	})
 	@Patch(":id")
-	async updateMovie(
-		@Param("id") id: number,
-		@Body() movieData: UpdateMovieDto,
-	): Promise<Movie> {
+	async updateMovie(@Param("id") id: number, @Body() movieData: UpdateMovieDto): Promise<Movie> {
 		try {
-			const res = await this.movieService.updateMovie(
-				id,
-				movieData,
-			);
+			const res = await this.movieService.updateMovie(id, movieData);
 
 			return res;
 		} catch (error) {
-			throw new BadRequestException(
-				`Failed to update movie: ${error}`,
-			);
+			throw new BadRequestException(`Failed to update movie: ${error}`);
 		}
 	}
 

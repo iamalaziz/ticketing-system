@@ -9,9 +9,7 @@ export const DatabaseException = (message?: string): ServiceException => {
 	return new ServiceException(DATABASE_ERROR, message);
 };
 
-export const PermissionDeniedException = (
-	message?: string,
-): ServiceException => {
+export const PermissionDeniedException = (message?: string): ServiceException => {
 	return new ServiceException(PERMISSION_DENIED, message);
 };
 

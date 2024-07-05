@@ -13,18 +13,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 		readonly configService: ConfigService,
 	) {
 		super({
-			jwtFromRequest:
-				ExtractJwt.fromAuthHeaderAsBearerToken(),
-			secretOrKey:
-				configService.get<string>("JWT_ACCESS_SECRET"),
+			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			secretOrKey: configService.get<string>("JWT_ACCESS_SECRET"),
 			ignoreExpiration: false,
 		});
 	}
 
 	async validate(payload: JwtDto): Promise<User> {
-		const user = await this.usersService.getUserById(
-			payload.userId,
-		);
+		const user = await this.usersService.getUserById(payload.userId);
 		if (!user) {
 			throw new UnauthorizedException();
 		}

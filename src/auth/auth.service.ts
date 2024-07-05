@@ -1,9 +1,4 @@
-import {
-	ConflictException,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
-} from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { AuthRepository } from "./auth.repository";
 import { AuthLoginDto } from "./dto/auth.dto";
 import * as bcrypt from "bcrypt";
@@ -26,15 +21,10 @@ export class AuthService {
 		/* check if user exists */
 		const user = await this.usersService.getUserByEmail(email);
 		if (user === undefined) {
-			throw new NotFoundException(
-				`User with email ${email} not found`,
-			);
+			throw new NotFoundException(`User with email ${email} not found`);
 		}
 
-		const isPasswordValid = await bcrypt.compare(
-			password,
-			user.password,
-		);
+		const isPasswordValid = await bcrypt.compare(password, user.password);
 		if (!isPasswordValid) {
 			throw new UnauthorizedException("Invalid password!");
 		}
@@ -45,26 +35,17 @@ export class AuthService {
 	// POST register user
 	async registerUser(userData: CreateUserDto) {
 		/* check if email is not already registered */
-		const existsEmail = await this.usersService.existsEmail(
-			userData.email,
-		);
+		const existsEmail = await this.usersService.existsEmail(userData.email);
 		if (existsEmail) {
-			throw new ConflictException(
-				"Email is already registered. Please Login!",
-			);
+			throw new ConflictException("Email is already registered. Please Login!");
 		}
 		/* hash password */
 		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(
-			userData.password,
-			salt,
-		);
+		const hashedPassword = await bcrypt.hash(userData.password, salt);
 		userData.password = hashedPassword;
 
 		await this.usersService.createUser(userData);
-		const { id } = await this.usersService.getUserByEmail(
-			userData.email,
-		);
+		const { id } = await this.usersService.getUserByEmail(userData.email);
 
 		return this.generateTokens({ userId: id });
 	}
@@ -81,8 +62,7 @@ export class AuthService {
 		return this.jwtService.sign(payload);
 	}
 	private generateRefreshToken(payload: { userId: number }): string {
-		const securityConfig =
-			this.configService.get<SecurityConfig>("security");
+		const securityConfig = this.configService.get<SecurityConfig>("security");
 
 		return this.jwtService.sign(payload, {
 			secret: this.configService.get("JWT_REFRESH_SECRET"),

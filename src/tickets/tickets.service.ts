@@ -16,9 +16,7 @@ export class TicketsService {
 
 	async findAll(): Promise<Ticket[]> {
 		try {
-			const [rows] = await this.mysqlConnection.execute(
-				"SELECT *FROM ticket",
-			);
+			const [rows] = await this.mysqlConnection.execute("SELECT *FROM ticket");
 
 			return rows;
 		} catch (error) {
@@ -28,10 +26,7 @@ export class TicketsService {
 
 	async findOne(id: number): Promise<Ticket | string> {
 		try {
-			const [rows] = await this.mysqlConnection.execute(
-				"SELECT * FROM ticket WHERE id = ?",
-				[id],
-			);
+			const [rows] = await this.mysqlConnection.execute("SELECT * FROM ticket WHERE id = ?", [id]);
 
 			if (rows.length > 0) {
 				return rows[0];
@@ -39,9 +34,7 @@ export class TicketsService {
 				return "No ticket with such ID";
 			}
 		} catch (error) {
-			throw new Error(
-				`Cannot find ticket with such ID=${id}`,
-			);
+			throw new Error(`Cannot find ticket with such ID=${id}`);
 		}
 	}
 
