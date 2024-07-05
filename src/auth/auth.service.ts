@@ -24,7 +24,7 @@ export class AuthService {
 	// POST auth user
 	async validateLogin({ email, password, }: AuthLoginDto) {
 		/* check if user exists */
-		const user = await this.usersService.getUserBy(email);
+		const user = await this.usersService.getUserByEmail(email);
 		if (user === undefined) {
 			throw new NotFoundException(`User with email ${email} not found`);
 		}
@@ -52,7 +52,7 @@ export class AuthService {
 		userData.password = hashedPassword;
 
 		await this.usersService.createUser(userData);
-		const { id, } = await this.usersService.getUserBy(userData.email);
+		const { id, } = await this.usersService.getUserByEmail(userData.email);
 
 		return this.generateTokens({ userId: id, });
 	}

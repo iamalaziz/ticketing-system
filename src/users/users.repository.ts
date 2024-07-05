@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { User, } from './user.entity';
 import { CreateUserDto, } from './dto/create-user.dto';
+import { NotFoundDataException } from 'src/common/exceptions';
+import { DatabaseException } from '../common/exceptions/service.exception';
 
 @Injectable()
 export class UsersRepository {
@@ -55,15 +57,10 @@ export class UsersRepository {
 		try {
 			const query = 'SELECT * FROM user WHERE id = ?';
 			const [res,] = await this.mysqlConnection.query(query, [id,]);
-			if (!res[0]) {
-				throw new NotFoundException('User not Found from the database');
-			}
 
 			return res[0];
 		} catch (error) {
-			throw new InternalServerErrorException(
-				`Database: Error from getUserById: ${error}`
-			);
+			throw DatabaseException(error.message);
 		}
 	}
 
