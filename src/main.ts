@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule, } from '@nestjs/swagger';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const config = new DocumentBuilder()
-		.setTitle('Ticketing Service Example')
+		.setTitle('Ticketing Service')
 		.setDescription('The Ticketing Service API description')
 		.setVersion('1.0')
 		.addTag('tickets')

@@ -100,9 +100,7 @@ export class UsersController {
     })
     async deleteUserProfile(@Param('id') id: string): Promise<boolean> {
     	try {
-    		const res = await this.usersService.deleteUserProfile(id);
-
-    		return res;
+    		return await this.usersService.deleteUserProfile(id);
     	} catch (error) {
     		throw new BadRequestException('Failed to delete user data');
     	}
