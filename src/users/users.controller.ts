@@ -4,6 +4,9 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpException,
+	HttpStatus,
+	NotFoundException,
 	Param,
 	Patch,
 } from '@nestjs/common';
@@ -20,6 +23,10 @@ import {
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
+
+	private isValidId(id: string): boolean {
+        return !isNaN(Number(id)) && Number(id) > 0;
+    }
     // GET all users list
     @Get()
     @ApiOperation({ summary: 'Get all users list', })
@@ -33,10 +40,17 @@ export class UsersController {
     	description: 'Could not fetch users list',
     })
 	async getAllUsers(): Promise<User[]> {
-		return await this.usersService.getAllUsers();
+		try {
+            // return await this.usersService.getAllUsers();
+
+			const users = await this.usersService.getAllUsers();
+            return users || [];
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 	}
 
-    // does email exists
+    // does email exist
     @Get('email/:email')
     async existsEmail(@Param('email') email: string): Promise<boolean> {
     	try {
@@ -46,7 +60,44 @@ export class UsersController {
     	}
     }
 
-    // GET user by ID
+	// GET user by email
+    @Get(':id')
+    @ApiOperation({ summary: 'Get user by id', })
+    @ApiParam({
+    	name: 'id',
+    	type: Number,
+    	description: 'User data',
+    })
+    @ApiResponse({
+    	status: 200,
+    	description: 'The found user',
+    	type: User,
+    })
+    @ApiResponse({
+    	status: 404,
+    	description: 'User not found',
+    })
+    async getUserById(@Param('id') id: string): Promise<User> {
+		// Validate the ID format (assuming it should be a number)
+        if (!this.isValidId(id)) {
+            throw new BadRequestException('Invalid ID format');
+        }
+    	try {
+            const user = await this.usersService.getUserById(Number(id));
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
+            return user;
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    // GET user by email
     @Get(':email')
     @ApiOperation({ summary: 'Get user by email', })
     @ApiParam({
@@ -63,8 +114,8 @@ export class UsersController {
     	status: 404,
     	description: 'User not found',
     })
-    async getUserBy(@Param('email') email: string): Promise<User> {
-    	return await this.usersService.getUserBy(email);
+    async getUserByEmail(@Param('email') email: string): Promise<User> {
+    	return await this.usersService.getUserByEmail(email);
     }
 
     // PATCH update user data
