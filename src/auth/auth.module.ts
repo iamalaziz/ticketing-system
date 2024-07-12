@@ -9,6 +9,7 @@ import { PassportModule } from "@nestjs/passport";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { SecurityConfig } from "../common/config/config.interface";
+import { JwtAuthGuard } from "./auth.guard";
 
 @Module({
 	imports: [
@@ -29,6 +30,6 @@ import { SecurityConfig } from "../common/config/config.interface";
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, mysqlProvider, AuthRepository, LocalStrategy],
+	providers: [AuthService, mysqlProvider, AuthRepository, LocalStrategy, JwtAuthGuard],
 })
 export class AuthModule {}
