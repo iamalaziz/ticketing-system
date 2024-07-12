@@ -13,10 +13,16 @@ export class UsersRepository {
 	// POST register
 	async createUser(userData: CreateUserDto): Promise<boolean> {
 		try {
-			const { username, date_of_birth, email, password } = userData;
+			const { username, birthdate, email, password } = userData;
 			const query: string =
-				"INSERT INTO user (username, date_of_birth, email, password) VALUES (?, ?, ?, ?);";
-			const res = await this.mysqlConnection.query(query, [username, date_of_birth, email, password]);
+				"INSERT INTO user (username, birthdate, email, password) VALUES (?, ?, ?, ?);";
+			console.log(query);
+			const res = await this.mysqlConnection.query(query, [
+				username,
+				new Date(birthdate),
+				email,
+				password,
+			]);
 
 			return res[0].affectedRows > 0;
 		} catch (error) {
@@ -37,7 +43,7 @@ export class UsersRepository {
 	// GET user by id
 	async getUserByEmail(email: string): Promise<User> {
 		try {
-			const query = "SELECT * FROM use WHERE email = ?";
+			const query = "SELECT * FROM user WHERE email = ?";
 			const [res] = await this.mysqlConnection.query(query, [email]);
 
 			return res[0];

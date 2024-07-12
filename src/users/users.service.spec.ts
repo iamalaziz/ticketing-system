@@ -19,7 +19,7 @@ describe("UsersService", () => {
 		username: "tom",
 		firstname: "Tom",
 		lastname: "Cat",
-		date_of_birth: 29,
+		birthdate: new Date("1999-01-02"),
 		email: "tom@roof.gmail",
 		password: "1234",
 		phone: "010-1289-1221",
@@ -31,7 +31,7 @@ describe("UsersService", () => {
 			username: "john",
 			firstname: "John",
 			lastname: "Doe",
-			date_of_birth: 25,
+			birthdate: new Date("1999-01-02"),
 			email: "john.doe@example.com",
 			password: "hashedpassword1",
 			phone: "123-456-7890",
@@ -41,7 +41,7 @@ describe("UsersService", () => {
 			username: "jane",
 			firstname: "Jane",
 			lastname: "Doe",
-			date_of_birth: 28,
+			birthdate: new Date("1999-01-02"),
 			email: "jane.doe@example.com",
 			password: "hashedpassword2",
 			phone: "098-765-4321",
@@ -115,7 +115,7 @@ describe("UsersService", () => {
 				{
 					id: "1",
 					name: "John Doe",
-					date_of_birth: "twenty-five",
+					birthdate: new Date("1999-01-02"),
 				},
 			]);
 
@@ -124,7 +124,7 @@ describe("UsersService", () => {
 				{
 					id: "1",
 					name: "John Doe",
-					date_of_birth: "twenty-five",
+					birthdate: new Date("1999-01-02"),
 				},
 			]);
 			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
