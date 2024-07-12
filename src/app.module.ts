@@ -8,6 +8,7 @@ import { mysqlProvider } from "./common/database/mysql.config";
 import { MoviesModule } from "./movies/movies.module";
 import { TicketsModule } from "./tickets/tickets.module";
 import { AuthModule } from "./auth/auth.module";
+import { UploadModule } from "./upload/upload.module";
 import config from "./common/config/config";
 
 @Module({
@@ -20,6 +21,7 @@ import config from "./common/config/config";
 		MoviesModule,
 		TicketsModule,
 		AuthModule,
+		UploadModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, mysqlProvider],
