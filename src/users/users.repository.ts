@@ -65,7 +65,7 @@ export class UsersRepository {
 
 			return user.length > 0;
 		} catch (error) {
-			throw new Error(`Email exists DB query: ${error}`);
+			throw DatabaseException(error);
 		}
 	}
 

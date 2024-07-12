@@ -30,11 +30,7 @@ export class UsersController {
 	// does email exist
 	@Get("email-exists/:email")
 	async existsEmail(@Param("email") email: string): Promise<boolean> {
-		try {
-			return await this.usersService.existsEmail(email);
-		} catch (error) {
-			throw new Error(`Error: ${error}`);
-		}
+		return await this.usersService.existsEmail(email);
 	}
 
 	// GET user by email

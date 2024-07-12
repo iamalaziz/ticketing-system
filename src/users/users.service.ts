@@ -37,12 +37,7 @@ export class UsersService {
 	}
 
 	async existsEmail(email: string): Promise<boolean> {
-		try {
-			return await this.usersRepository.existsEmail(email);
-		} catch (error) {
-			console.error("Error checking if email exists:", error.message);
-			throw new InternalServerErrorException("Failed to check if email exists");
-		}
+		return await this.usersRepository.existsEmail(email);
 	}
 
 	// PATCH update user data
