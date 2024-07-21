@@ -1,19 +1,19 @@
-import type { Config, } from './config.interface';
+import type { Config } from "./config.interface";
 
 const config: Config = {
-	nest: { port: 3000, },
-	cors: { enabled: true, },
+	nest: { port: 3000 },
+	cors: { enabled: true },
 	/* !Implement security for swagger config */
 	swagger: {
 		enabled: true,
-		title: '',
-		description: '',
-		version: '',
-		path: '',
+		title: "",
+		description: "",
+		version: "",
+		path: "",
 	},
 	security: {
-		expiresIn: '2m',
-		refreshIn: '7d',
+		expiresIn: "1h",
+		refreshIn: "7d",
 		bcryptSaltOrRound: 10,
 	},
 };

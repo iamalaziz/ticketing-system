@@ -1,28 +1,28 @@
 export interface Config {
-    nest: NestConfig;
-    cors: CorsConfig;
-    swagger: SwaggerConfig;
-    security: SecurityConfig;
-  }
-  
+	nest: NestConfig;
+	cors: CorsConfig;
+	swagger: SwaggerConfig;
+	security: SecurityConfig;
+}
+
 export interface NestConfig {
-    port: number;
-  }
-  
+	port: number;
+}
+
 export interface CorsConfig {
-    enabled: boolean;
-  }
-  
+	enabled: boolean;
+}
+
 export interface SwaggerConfig {
-    enabled: boolean;
-    title: string;
-    description: string;
-    version: string;
-    path: string;
-  }
-  
+	enabled: boolean;
+	title: string;
+	description: string;
+	version: string;
+	path: string;
+}
+
 export interface SecurityConfig {
-    expiresIn: string;
-    refreshIn: string;
-    bcryptSaltOrRound: string | number;
-  }
+	expiresIn: string;
+	refreshIn: string;
+	bcryptSaltOrRound: string | number;
+}

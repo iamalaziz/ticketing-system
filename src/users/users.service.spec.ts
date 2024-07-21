@@ -1,10 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "./users.service";
 import { UsersRepository } from "./users.repository";
-import {
-	InternalServerErrorException,
-	NotFoundException,
-} from "@nestjs/common";
+import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { User } from "./user.entity";
 
 describe("UsersService", () => {
@@ -22,7 +19,7 @@ describe("UsersService", () => {
 		username: "tom",
 		firstname: "Tom",
 		lastname: "Cat",
-		age: 29,
+		birthdate: new Date("1999-01-02"),
 		email: "tom@roof.gmail",
 		password: "1234",
 		phone: "010-1289-1221",
@@ -34,7 +31,7 @@ describe("UsersService", () => {
 			username: "john",
 			firstname: "John",
 			lastname: "Doe",
-			age: 25,
+			birthdate: new Date("1999-01-02"),
 			email: "john.doe@example.com",
 			password: "hashedpassword1",
 			phone: "123-456-7890",
@@ -44,7 +41,7 @@ describe("UsersService", () => {
 			username: "jane",
 			firstname: "Jane",
 			lastname: "Doe",
-			age: 28,
+			birthdate: new Date("1999-01-02"),
 			email: "jane.doe@example.com",
 			password: "hashedpassword2",
 			phone: "098-765-4321",
@@ -55,7 +52,10 @@ describe("UsersService", () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				UsersService,
-				{ provide: UsersRepository, useValue: mockUserRepository },
+				{
+					provide: UsersRepository,
+					useValue: mockUserRepository,
+				},
 			],
 		}).compile();
 
@@ -81,9 +81,7 @@ describe("UsersService", () => {
 			const errorMessage = "Database error";
 			mockUserRepository.createUser.mockRejectedValue(new Error(errorMessage));
 
-			await expect(service.createUser(mockUser)).rejects.toThrow(
-				InternalServerErrorException
-			);
+			await expect(service.createUser(mockUser)).rejects.toThrow(InternalServerErrorException);
 		});
 	});
 
@@ -109,9 +107,7 @@ describe("UsersService", () => {
 			const errorMessage = "Database error";
 			mockUserRepository.getAllUsers.mockRejectedValue(new Error(errorMessage));
 
-			await expect(service.getAllUsers()).rejects.toThrow(
-				InternalServerErrorException
-			);
+			await expect(service.getAllUsers()).rejects.toThrow(InternalServerErrorException);
 		});
 
 		it("should handle unexpected data format gracefully", async () => {
@@ -119,7 +115,7 @@ describe("UsersService", () => {
 				{
 					id: "1",
 					name: "John Doe",
-					age: "twenty-five",
+					birthdate: new Date("1999-01-02"),
 				},
 			]);
 
@@ -128,7 +124,7 @@ describe("UsersService", () => {
 				{
 					id: "1",
 					name: "John Doe",
-					age: "twenty-five",
+					birthdate: new Date("1999-01-02"),
 				},
 			]);
 			expect(mockUserRepository.getAllUsers).toHaveBeenCalled();
@@ -144,13 +140,9 @@ describe("UsersService", () => {
 
 		it("should handle repository throwing a custom error", async () => {
 			class CustomError extends Error {}
-			mockUserRepository.getAllUsers.mockRejectedValue(
-				new CustomError("Custom error")
-			);
+			mockUserRepository.getAllUsers.mockRejectedValue(new CustomError("Custom error"));
 
-			await expect(service.getAllUsers()).rejects.toThrow(
-				InternalServerErrorException
-			);
+			await expect(service.getAllUsers()).rejects.toThrow(InternalServerErrorException);
 		});
 	});
 

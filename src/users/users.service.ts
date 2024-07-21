@@ -1,90 +1,56 @@
-import {
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { User } from "./user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersRepository } from "./users.repository";
+import { NotFoundDataException } from "../common/exceptions";
 
 @Injectable()
 export class UsersService {
 	constructor(private readonly usersRepository: UsersRepository) {}
 
 	async createUser(userData: CreateUserDto): Promise<boolean> {
-		try {
-			return await this.usersRepository.createUser(userData);
-		} catch (error) {
-			console.error("Error creating user:", error.message);
-			throw new InternalServerErrorException("Failed to create user");
-		}
+		return await this.usersRepository.createUser(userData);
 	}
 
 	// GET all users list
 	async getAllUsers(): Promise<User[]> {
-		try {
-			return await this.usersRepository.getAllUsers();
-		} catch (error) {
-			console.error("Error fetching all users:", error.message);
-			throw new InternalServerErrorException("Failed to fetch users");
-		}
+		return await this.usersRepository.getAllUsers();
 	}
 
-	// GET user by ID, email
+	// GET user email
 	async getUserByEmail(email: string): Promise<User> {
-		try {
-			return await this.usersRepository.getUserByEmail(email);
-		} catch (error) {
-			console.error("Error fetching user by email:", error.message);
-			throw new InternalServerErrorException("Failed to fetch user by email");
+		const user = await this.usersRepository.getUserByEmail(email);
+		if (!user) {
+			throw NotFoundDataException(`User with ${email} not found`);
 		}
+		return user;
 	}
 
 	// GET user by ID
 	async getUserById(id: number): Promise<User> {
-		try {
-			const user = await this.usersRepository.getUserById(id);
-			if (!user) {
-				throw new NotFoundException(`User with ID ${id} not found`);
-			}
-			return user;
-		} catch (error) {
-			if (error instanceof NotFoundException) {
-				throw error; // rethrow the NotFoundException to maintain the specific error type
-			}
-			console.error("Error fetching user by ID:", error.message);
-			throw new InternalServerErrorException("Failed to fetch user by ID");
+		const user = await this.usersRepository.getUserById(id);
+		if (!user) {
+			throw NotFoundDataException(`User with ID ${id} not found`);
 		}
+
+		return user;
 	}
 
 	async existsEmail(email: string): Promise<boolean> {
-		try {
-			return await this.usersRepository.existsEmail(email);
-		} catch (error) {
-			console.error("Error checking if email exists:", error.message);
-			throw new InternalServerErrorException("Failed to check if email exists");
-		}
+		return await this.usersRepository.existsEmail(email);
 	}
 
 	// PATCH update user data
 	async updateUserData(id: number, data: User): Promise<User> {
-		try {
-			return await this.usersRepository.updateUserData(id, data);
-			
-		} catch (error) {
-			console.error("Error while updating user data:", + error.message);
-			throw new InternalServerErrorException("Failed to update user data")
-		}
+		await this.usersRepository.updateUserData(id, data);
+		return this.getUserById(id);
 	}
 
 	// DELETE user profile
 	async deleteUserProfile(id: string): Promise<boolean> {
-		try {
-			return await this.usersRepository.deleteUserProfile(Number(id));
-			
-		} catch (error) {
-			console.error("Error while deleting user profile:", + error.message);
-			throw new InternalServerErrorException("Failed to delete user profile")
-		}
+		const res = await this.usersRepository.deleteUserProfile(Number(id));
+		if (!res) throw NotFoundDataException(`User with id ${id} Not Found`);
+
+		return res;
 	}
 }

@@ -1,27 +1,27 @@
-import { ApiProperty, } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class User {
-  @ApiProperty()
-  id?: number;
+	@ApiProperty()
+	id?: number;
 
-  @ApiProperty()
-  username: string;
-  
-  @ApiProperty()
-  firstname: string;
+	@ApiProperty()
+	username: string;
 
-  @ApiProperty()
-  lastname: string;
+	@ApiProperty()
+	firstname: string;
 
-  @ApiProperty()
-  age: number;
+	@ApiProperty()
+	lastname: string;
 
-  @ApiProperty()
-  email: string;
+	@ApiProperty()
+	birthdate: Date;
 
-  @ApiProperty()
-  password: string;
+	@ApiProperty()
+	email: string;
 
-  @ApiProperty()
-  phone: string;
+	@ApiProperty()
+	password: string;
+
+	@ApiProperty()
+	phone: string;
 }

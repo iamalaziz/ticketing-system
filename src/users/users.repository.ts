@@ -1,120 +1,109 @@
-import {
-	Injectable,
-	Inject,
-	NotFoundException,
-	InternalServerErrorException,
-} from '@nestjs/common';
-import { User, } from './user.entity';
-import { CreateUserDto, } from './dto/create-user.dto';
+import { Injectable, Inject } from "@nestjs/common";
+import { User } from "./user.entity";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { DatabaseException, NotFoundDataException } from "../common/exceptions/service.exception";
 
 @Injectable()
 export class UsersRepository {
 	constructor(
-        @Inject('MYSQL_CONNECTION')
-        private readonly mysqlConnection: any
+		@Inject("MYSQL_CONNECTION")
+		private readonly mysqlConnection: any,
 	) {}
 
 	// POST register
 	async createUser(userData: CreateUserDto): Promise<boolean> {
 		try {
-			const res = await this.mysqlConnection.query(
-				'INSERT INTO user (username, firstname, lastname, age, email, password, phone) VALUES (?, ?, ?, ?, ?, ?, ?);', [...Object.values(userData),]
-			);
+			const { username, birthdate, email, password } = userData;
+			const query: string =
+				"INSERT INTO user (username, birthdate, email, password) VALUES (?, ?, ?, ?);";
+			console.log(query);
+			const res = await this.mysqlConnection.query(query, [
+				username,
+				new Date(birthdate),
+				email,
+				password,
+			]);
 
 			return res[0].affectedRows > 0;
 		} catch (error) {
-			throw new Error(`Error registering user: ${error}`);
+			throw DatabaseException(error);
 		}
 	}
 
 	async getAllUsers(): Promise<User[]> {
-		const [rows,] = await this.mysqlConnection.query('SELECT * FROM user');
+		try {
+			const [rows] = await this.mysqlConnection.query("SELECT * FROM user");
 
-		return rows;
+			return rows;
+		} catch (error) {
+			throw DatabaseException(error.message);
+		}
 	}
 
 	// GET user by id
 	async getUserByEmail(email: string): Promise<User> {
 		try {
-			const query = 'SELECT * FROM user WHERE email = ?';
-			const [res,] = await this.mysqlConnection.query(query, [email,]);
-			if (!res[0]) {
-				throw new NotFoundException('User not Found from the database');
-			}
+			const query = "SELECT * FROM user WHERE email = ?";
+			const [res] = await this.mysqlConnection.query(query, [email]);
 
 			return res[0];
 		} catch (error) {
-			throw new InternalServerErrorException(
-				`Database: Error from getUserById: ${error}`
-			);
+			throw DatabaseException(error);
 		}
 	}
-    
+
 	// GET user by id
 	async getUserById(id: number): Promise<User> {
 		try {
-			const query = 'SELECT * FROM user WHERE id = ?';
-			const [res,] = await this.mysqlConnection.query(query, [id,]);
-			if (!res[0]) {
-				throw new NotFoundException('User not Found from the database');
-			}
+			const query = "SELECT * FROM user WHERE id = ?";
+			const [res] = await this.mysqlConnection.query(query, [id]);
 
 			return res[0];
 		} catch (error) {
-			throw new InternalServerErrorException(
-				`Database: Error from getUserById: ${error}`
-			);
+			throw DatabaseException(error.message);
 		}
 	}
 
 	async existsEmail(email: string): Promise<boolean> {
 		try {
-			const query = 'SELECT * FROM user WHERE email = ?';
-			const [user,] = await this.mysqlConnection.query(query, [email,]);
+			const query = "SELECT * FROM user WHERE email = ?";
+			const [user] = await this.mysqlConnection.query(query, [email]);
 
 			return user.length > 0;
 		} catch (error) {
-			throw new Error(`Email exists DB query: ${error}`);
+			throw DatabaseException(error);
 		}
 	}
-    
+
 	// PATCH update user data
-	async updateUserData(id: number, data: User): Promise<User> {
+	async updateUserData(id: number, data: User) {
 		try {
-			const query =
-                'UPDATE user SET firstname = ?, lastname = ?, email = ?, password = ?, phone = ?, username = ? WHERE id = ?';
-			const values = [
-				data.firstname,
-				data.lastname,
-				data.email,
-				data.password,
-				data.phone,
-				data.username,
-				id,
-			];
-			const res = await this.mysqlConnection.execute(query, values);
+			const update: string[] = [];
+			data.username && update.push(`username = "${data.username}"`);
+			data.firstname && update.push(`firstname = "${data.firstname}"`);
+			data.lastname && update.push(`lastname = "${data.lastname}"`);
+			data.email && update.push(`email = "${data.email}"`);
+			data.phone && update.push(`phone = "${data.phone}"`);
 
-			if (res.length === 0) {
-				throw new Error('User not found or update failed');
+			const query = `UPDATE user SET ${update.join(", ")} WHERE id = ${id}`;
+			const [res] = await this.mysqlConnection.query(query);
+			if (res.affectedRows === 0) {
+				throw NotFoundDataException("User not found!");
 			}
-
-			return res;
-		} catch (err) {
-			console.error('Database: Error updating user data:', err.message);
-			throw new Error('Could not update user data');
+			return;
+		} catch (error) {
+			throw DatabaseException(error);
 		}
 	}
 
 	// DELETE delete user profile
 	async deleteUserProfile(id: number): Promise<boolean> {
 		try {
-			const query = 'DELETE FROM user WHERE id = ?;';
-			await this.mysqlConnection.query(query, [id,]);
-
-			return true;
+			const query = "DELETE FROM user WHERE id = ?;";
+			const [res] = await this.mysqlConnection.query(query, [id]);
+			return res.affectedRows > 0;
 		} catch (err) {
-			console.error('Database: Error deleting user:', err);
-			throw err;
+			throw DatabaseException(err);
 		}
 	}
 }
